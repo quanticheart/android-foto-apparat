@@ -38,14 +38,16 @@
 package com.quanticheart.fotoapparat
 
 import android.os.Bundle
-import android.widget.SeekBar
+import com.quanticheart.camera.BaseCameraActivity
+import com.quanticheart.camera.extentions.setThumb
+import com.quanticheart.camera.extentions.setZoomListener
 import kotlinx.android.synthetic.main.activity_simple.*
 
 class SimpleActivity : BaseCameraActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_simple)
-        setCamera(ca1, CameraState.FRONT, FlashState.TORCH)
+        startCamera(ca1, focus)
         /**
          * init
          */
@@ -57,19 +59,11 @@ class SimpleActivity : BaseCameraActivity() {
         btnFlash.setOnClickListener { changeFlashStatus() }
         btnAction.setOnClickListener {
             takePicture {
-                it?.bitmap
+                thunb.setThumb(it!!)
             }
         }
-        zoom.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                setZoon(p1)
-            }
-
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-            }
-        })
+        zoom.setZoomListener {
+            setZoon(it)
+        }
     }
 }

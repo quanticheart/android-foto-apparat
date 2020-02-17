@@ -31,13 +31,14 @@
  *  *        |/_/         \===/
  *  *                       =
  *  *
- *  * Copyright(c) Developed by John Alves at 2020/2/16 at 0:24:55 for quantic heart studios
+ *  * Copyright(c) Developed by John Alves at 2020/2/16 at 3:36:25 for quantic heart studios
  *
  */
 
-package com.quanticheart.fotoapparat
+package com.quanticheart.camera
 
 import androidx.appcompat.app.AppCompatActivity
+import com.quanticheart.camera.file.getExternalFile
 import io.fotoapparat.Fotoapparat
 import io.fotoapparat.configuration.CameraConfiguration
 import io.fotoapparat.log.fileLogger
@@ -47,21 +48,23 @@ import io.fotoapparat.parameter.ScaleType
 import io.fotoapparat.result.BitmapPhoto
 import io.fotoapparat.selector.*
 import io.fotoapparat.view.CameraView
+import io.fotoapparat.view.FocusView
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 
 abstract class BaseCameraActivity : AppCompatActivity() {
-    protected lateinit var fotoapparat: Fotoapparat
+    private lateinit var fotoapparat: Fotoapparat
 
     /**
      * Default configurations
      */
-    private var cameraState = CameraState.BACK
-    private var flashState = FlashState.OFF
+    private var cameraState =
+        CameraState.BACK
+    private var flashState =
+        FlashState.OFF
 
-    fun setCamera(
+    protected fun startCamera(
         cameraView: CameraView,
+        focusView: FocusView? = null,
         startCameraState: CameraState = cameraState,
         startFlashState: FlashState = flashState
     ) {
@@ -78,7 +81,8 @@ abstract class BaseCameraActivity : AppCompatActivity() {
             ),
             cameraErrorCallback = { error ->
                 println("Recorder errors: $error")
-            }   // (optional) log fatal errors
+            },  // (optional) log fatal errors
+            focusView = focusView
         )
     }
 
@@ -117,16 +121,12 @@ abstract class BaseCameraActivity : AppCompatActivity() {
     /**
      * Take picture
      */
-    var formatter: SimpleDateFormat = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.US)
-    var now: Date = Date()
+
     protected fun takePicture(file: File? = null, takeBitmap: ((BitmapPhoto?) -> Unit)? = null) {
         val photoResult = fotoapparat.takePicture()
         // save to file
         photoResult.saveToFile(
-            file ?: File(
-                getExternalFilesDir("photos"),
-                formatter.format(now) + "_photo.jpg"
-            )
+            file ?: getExternalFile()
         )
 
         // obtain Bitmap
@@ -157,8 +157,8 @@ abstract class BaseCameraActivity : AppCompatActivity() {
         )
     }
 
-    protected fun setZoon(zoom: Int) {
-        fotoapparat.setZoom(zoom.toFloat().div(100))
+    protected fun setZoon(zoom: Float) {
+        fotoapparat.setZoom(zoom)
     }
 
     protected fun callFocus() {

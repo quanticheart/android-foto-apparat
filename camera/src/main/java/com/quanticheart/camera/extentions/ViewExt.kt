@@ -31,35 +31,31 @@
  *  *        |/_/         \===/
  *  *                       =
  *  *
- *  * Copyright(c) Developed by John Alves at 2020/2/16 at 1:24:41 for quantic heart studios
+ *  * Copyright(c) Developed by John Alves at 2020/2/16 at 3:53:34 for quantic heart studios
  *
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+package com.quanticheart.camera.extentions
 
-buildscript {
-    ext.kotlin_version = '1.3.61'
-    repositories {
-        google()
-        jcenter()
+import android.widget.ImageView
+import android.widget.SeekBar
+import io.fotoapparat.result.BitmapPhoto
 
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
+fun SeekBar.setZoomListener(zoom: (Float) -> Unit) {
+    setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+            zoom(p1.toFloat().div(100))
+        }
+
+        override fun onStartTrackingTouch(p0: SeekBar?) {
+        }
+
+        override fun onStopTrackingTouch(p0: SeekBar?) {
+        }
+    })
 }
 
-allprojects {
-    repositories {
-        google()
-        jcenter()
-
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
+fun ImageView.setThumb(bitmapPhoto: BitmapPhoto) {
+    setImageBitmap(bitmapPhoto.bitmap)
+    rotation = -bitmapPhoto.rotationDegrees.toFloat()
 }
