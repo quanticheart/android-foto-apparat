@@ -38,6 +38,7 @@
 package com.quanticheart.camera.file
 
 import android.app.Activity
+import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.MediaStore.MediaColumns
@@ -45,7 +46,7 @@ import android.provider.MediaStore.MediaColumns
 fun Activity.getAllImages(): ArrayList<ImageDataModel> {
     val allImages: ArrayList<ImageDataModel> = ArrayList()
 
-    val projection = arrayOf(MediaColumns.DATA, MediaStore.Images.Media.DISPLAY_NAME)
+    val projection = getProjectionDataBaseKeys()
 
     //get all images from external storage
     val uriExternal: Uri? = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -53,17 +54,8 @@ fun Activity.getAllImages(): ArrayList<ImageDataModel> {
         val cursorExt = contentResolver.query(uri, projection, null, null, null)
 
         cursorExt?.let { cursor ->
-            val columnIndexData = cursor.getColumnIndexOrThrow(MediaColumns.DATA)
-            val columnIndexFolderName =
-                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
-
             while (cursor.moveToNext()) {
-                allImages.add(
-                    ImageDataModel(
-                        cursor.getString(columnIndexFolderName),
-                        cursor.getString(columnIndexData)
-                    )
-                )
+                allImages.add(cursor.getAllDataImage(projection))
             }
         }
         cursorExt?.close()
@@ -74,25 +66,51 @@ fun Activity.getAllImages(): ArrayList<ImageDataModel> {
     uriInternal.let { uri ->
         val cursorIntr = contentResolver.query(uri, projection, null, null, null)
         cursorIntr?.let { cursor ->
-            val columnIndexData = cursor.getColumnIndexOrThrow(MediaColumns.DATA)
-            val columnIndexFolderName =
-                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
-
             while (cursor.moveToNext()) {
-                allImages.add(
-                    ImageDataModel(
-                        cursor.getString(columnIndexFolderName),
-                        cursor.getString(columnIndexData)
-                    )
-                )
+                allImages.add(cursor.getAllDataImage(projection))
             }
         }
         cursorIntr?.close()
     }
+
+    allImages.reverse()
     return allImages
 }
 
+private fun Cursor.getAllDataImage(projection: Array<String>): ImageDataModel {
+    return ImageDataModel(
+        getIntOrEmpty(projection[0]),
+        getStringOrEmpty(projection[1]),
+        getStringOrEmpty(projection[2])
+    )
+}
+
+private fun getProjectionDataBaseKeys(): Array<String> {
+    return arrayOf(
+        MediaStore.Images.Media._ID,
+        MediaStore.Images.Media.DISPLAY_NAME,
+        MediaColumns.DATA
+    )
+}
+
+private fun Cursor.getStringOrEmpty(key: String): String {
+    return try {
+        getString(getColumnIndexOrThrow(key))
+    } catch (e: Exception) {
+        ""
+    }
+}
+
+private fun Cursor.getIntOrEmpty(key: String): Int {
+    return try {
+        getInt(getColumnIndexOrThrow(key))
+    } catch (e: Exception) {
+        0
+    }
+}
+
 data class ImageDataModel(
-    var imageTitle: String,
-    var imagePath: String
+    val id: Int = 0,
+    var title: String,
+    var path: String
 )

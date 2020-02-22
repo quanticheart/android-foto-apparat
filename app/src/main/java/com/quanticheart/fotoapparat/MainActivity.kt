@@ -41,12 +41,12 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.quanticheart.camera.file.getAllImages
+import com.quanticheart.camera.galery.GaleryActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -71,9 +71,14 @@ class MainActivity : AppCompatActivity() {
         btn1.setOnClickListener {
             startActivity(Intent(this, SimpleActivity::class.java))
         }
-        val list = getAllImages()
-        list.forEach {
-            Log.e("file", it.imageTitle)
+
+        btn2.setOnClickListener {
+            startActivity(Intent(this, GaleryActivity::class.java))
+        }
+
+        val l = getAllImages()
+        l.forEach {
+            Log.w("DATA", it.toString())
         }
     }
 

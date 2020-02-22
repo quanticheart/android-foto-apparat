@@ -38,6 +38,7 @@
 package com.quanticheart.camera
 
 import androidx.appcompat.app.AppCompatActivity
+import com.quanticheart.camera.file.addImageToGallery
 import com.quanticheart.camera.file.getExternalFile
 import io.fotoapparat.Fotoapparat
 import io.fotoapparat.configuration.CameraConfiguration
@@ -125,13 +126,13 @@ abstract class BaseCameraActivity : AppCompatActivity() {
     protected fun takePicture(file: File? = null, takeBitmap: ((BitmapPhoto?) -> Unit)? = null) {
         val photoResult = fotoapparat.takePicture()
         // save to file
-        photoResult.saveToFile(
-            file ?: getExternalFile()
-        )
+        val fileFinal = file ?: getExternalFile()
+        photoResult.saveToFile(fileFinal)
 
         // obtain Bitmap
         photoResult.toBitmap()
             .whenAvailable { bitmapPhoto ->
+                addImageToGallery(fileFinal)
                 takeBitmap?.invoke(bitmapPhoto)
             }
     }

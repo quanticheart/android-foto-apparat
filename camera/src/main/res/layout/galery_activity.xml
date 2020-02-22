@@ -31,7 +31,7 @@
   ~  *        |/_/         \===/
   ~  *                       =
   ~  *
-  ~  * Copyright(c) Developed by John Alves at 2020/2/15 at 11:31:19 for quantic heart studios
+  ~  * Copyright(c) Developed by John Alves at 2020/2/22 at 0:3:18 for quantic heart studios
   ~  */
   -->
 
@@ -39,21 +39,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:gravity="center"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+    android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Camera" />
-
-    <Button
-        android:id="@+id/btn2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Galeria" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/galery_item" />
 
 </LinearLayout>

@@ -31,42 +31,59 @@
  *  *        |/_/         \===/
  *  *                       =
  *  *
- *  * Copyright(c) Developed by John Alves at 2020/2/16 at 1:24:41 for quantic heart studios
- *  
+ *  * Copyright(c) Developed by John Alves at 2020/2/22 at 0:4:2 for quantic heart studios
+ *
  */
 
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+package com.quanticheart.camera
 
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.quanticheart.camera.file.ImageDataModel
+import kotlinx.android.synthetic.main.galery_item.view.*
 
-    defaultConfig {
-        minSdkVersion 23
-        targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+class GaleryAdapter(private val recyclerView: RecyclerView) :
+    RecyclerView.Adapter<GaleryAdapter.GaleryViewHolder>() {
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles 'consumer-rules.pro'
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    init {
+        recyclerView.apply {
+            layoutManager = GridLayoutManager(recyclerView.context, 3)
+            adapter = this@GaleryAdapter
         }
     }
 
-}
+    private val database = ArrayList<ImageDataModel>()
 
-dependencies {
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'io.fotoapparat:fotoapparat:2.7.0'
-    implementation 'androidx.core:core-ktx:1.3.0-alpha01'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.google.android.material:material:1.2.0-alpha05'
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    fun addData(dataList: List<ImageDataModel>) {
+        if (dataList.isNotEmpty()) {
+            database.clear()
+            database.addAll(dataList)
+            notifyDataSetChanged()
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GaleryViewHolder =
+        GaleryViewHolder(
+            LayoutInflater.from(recyclerView.context).inflate(
+                R.layout.galery_item,
+                parent,
+                false
+            )
+        )
+
+    override fun getItemCount(): Int = database.size
+
+    override fun onBindViewHolder(holder: GaleryViewHolder, position: Int) {
+        holder.bind(database[position])
+    }
+
+    class GaleryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bind(data: ImageDataModel) {
+            Glide.with(itemView.context).load(data.path).into(itemView.img)
+        }
+    }
 }

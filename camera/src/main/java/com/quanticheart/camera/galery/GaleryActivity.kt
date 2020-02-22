@@ -31,42 +31,27 @@
  *  *        |/_/         \===/
  *  *                       =
  *  *
- *  * Copyright(c) Developed by John Alves at 2020/2/16 at 1:24:41 for quantic heart studios
- *  
+ *  * Copyright(c) Developed by John Alves at 2020/2/22 at 1:13:19 for quantic heart studios
+ *
  */
 
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+package com.quanticheart.camera.galery
 
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import com.quanticheart.camera.GaleryAdapter
+import com.quanticheart.camera.R
+import com.quanticheart.camera.file.getAllImages
+import kotlinx.android.synthetic.main.galery_activity.*
 
-    defaultConfig {
-        minSdkVersion 23
-        targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+class GaleryActivity : AppCompatActivity() {
+    lateinit var adapter: GaleryAdapter
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.galery_activity)
+        adapter = GaleryAdapter(list)
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles 'consumer-rules.pro'
+        val listGalery = getAllImages()
+        adapter.addData(listGalery)
     }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
-}
-
-dependencies {
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'io.fotoapparat:fotoapparat:2.7.0'
-    implementation 'androidx.core:core-ktx:1.3.0-alpha01'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.google.android.material:material:1.2.0-alpha05'
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
 }
